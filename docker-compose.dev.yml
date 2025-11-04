@@ -5,5 +5,5 @@ services:
       - ./postgres:/var/lib/postgresql/18/docker
     environment:
       - POSTGRES_PASSWORD=mysecretpassword
-    expose:
+    ports:
       - 5432:5432

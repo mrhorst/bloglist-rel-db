@@ -1,0 +1,28 @@
+{
+  "name": "bloglist-rel-db",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrhorst/bloglist-rel-db.git"
+  },
+  "author": "mrhorst",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mrhorst/bloglist-rel-db/issues"
+  },
+  "homepage": "https://github.com/mrhorst/bloglist-rel-db#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "pg": "^8.16.3",
+    "sequelize": "^6.37.7"
+  }
+}

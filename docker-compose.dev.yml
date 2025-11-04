@@ -1,0 +1,9 @@
+services:
+  db:
+    image: postgres
+    volumes:
+      - ./postgres:/var/lib/postgresql/18/docker
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+    expose:
+      - 5432:5432

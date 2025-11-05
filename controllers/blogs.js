@@ -1,5 +1,7 @@
+const jwt = require('jsonwebtoken')
 const router = require('express').Router()
 const { Blog } = require('../models')
+const { SECRET } = require('../util/config')
 
 const blogFinder = async (req, res, next) => {
   try {
@@ -17,17 +19,31 @@ const blogFinder = async (req, res, next) => {
   next()
 }
 
+const tokenExtractor = async (req, res, next) => {
+  const authorization = req.get('authorization')
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+    try {
+      req.decodedToken = jwt.verify(authorization.substring(7), SECRET)
+    } catch (error) {
+      next(error)
+    }
+  } else {
+    return res.status(401).send({ error: 'token missing' })
+  }
+  next()
+}
+
 router.get('/', async (req, res, next) => {
   const blogs = await Blog.findAll()
   res.json(blogs)
 })
 
-router.post('/', async (req, res, next) => {
-  const blog = await Blog.create(req.body)
+router.post('/', tokenExtractor, async (req, res, next) => {
+  const blog = await Blog.create({ ...req.body, userId: req.decodedToken.id })
   res.send(blog)
 })
 
-router.delete('/:id', blogFinder, async (req, res, next) => {
+router.delete('/:id', tokenExtractor, blogFinder, async (req, res, next) => {
   try {
     await req.blog.destroy()
     res.sendStatus(204) //no content
@@ -36,7 +52,7 @@ router.delete('/:id', blogFinder, async (req, res, next) => {
   }
 })
 
-router.put('/:id', blogFinder, async (req, res, next) => {
+router.put('/:id', tokenExtractor, blogFinder, async (req, res, next) => {
   try {
     req.blog.likes = req.body.likes
     await req.blog.save()

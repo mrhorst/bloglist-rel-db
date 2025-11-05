@@ -50,6 +50,7 @@ router.get('/', async (req, res, next) => {
       attributes: { exclude: ['id'] },
     },
     where,
+    order: [['likes', 'DESC']],
   })
   res.json(blogs)
 })

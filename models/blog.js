@@ -26,6 +26,19 @@ Blog.init(
       allowNull: false,
       defaultValue: 0,
     },
+    year: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      validate: {
+        min: 1991,
+        max() {
+          const currentYear = new Date().getFullYear()
+          if (this.year != null && this.year > currentYear) {
+            throw new Error('You cannot publish articles in the future')
+          }
+        },
+      },
+    },
   },
   {
     sequelize,

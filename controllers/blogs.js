@@ -44,6 +44,11 @@ router.post('/', tokenExtractor, async (req, res, next) => {
 })
 
 router.delete('/:id', tokenExtractor, blogFinder, async (req, res, next) => {
+  if (req.decodedToken.id !== req.blog.userId) {
+    res.send({
+      error: `authenticated user is not owner of this resource. ${req.decodedToken.id} x ${req.blog.userId}`,
+    })
+  }
   try {
     await req.blog.destroy()
     res.sendStatus(204) //no content

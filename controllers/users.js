@@ -1,4 +1,5 @@
 const route = require('express').Router()
+const { Blog } = require('../models')
 const User = require('../models/user')
 
 route.post('/', async (req, res, next) => {
@@ -12,7 +13,12 @@ route.post('/', async (req, res, next) => {
 
 route.get('/', async (req, res, next) => {
   try {
-    const users = await User.findAll()
+    const users = await User.findAll({
+      include: {
+        model: Blog,
+        attributes: { exclude: ['userId'] },
+      },
+    })
     res.send(users)
   } catch (error) {
     next(error)

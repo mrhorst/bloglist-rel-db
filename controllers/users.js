@@ -45,9 +45,9 @@ route.get('/:id', async (req, res, next) => {
       {
         model: Blog,
         as: 'readings',
-        attributes: { exclude: ['userId', ...HIDE_TIMESTAMP] },
+        attributes: { exclude: ['id', 'userId', ...HIDE_TIMESTAMP] },
         through: {
-          attributes: [],
+          attributes: ['isRead', 'id'],
         },
       },
     ],

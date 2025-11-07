@@ -36,6 +36,26 @@ route.get('/', async (req, res, next) => {
   }
 })
 
+const HIDE_TIMESTAMP = ['createdAt', 'updatedAt']
+
+route.get('/:id', async (req, res, next) => {
+  const user = await User.findByPk(req.params.id, {
+    attributes: { exclude: HIDE_TIMESTAMP },
+    include: [
+      {
+        model: Blog,
+        as: 'readings',
+        attributes: { exclude: ['userId', ...HIDE_TIMESTAMP] },
+        through: {
+          attributes: [],
+        },
+      },
+    ],
+  })
+
+  res.send(user)
+})
+
 route.put('/:username', async (req, res, next) => {
   try {
     const user = await User.findOne({

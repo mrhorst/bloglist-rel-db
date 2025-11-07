@@ -19,6 +19,7 @@ ReadingList.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: { model: 'blogs', key: 'id' },
+      unique: true,
     },
     isRead: {
       type: DataTypes.BOOLEAN,

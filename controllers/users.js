@@ -39,21 +39,31 @@ route.get('/', async (req, res, next) => {
 const HIDE_TIMESTAMP = ['createdAt', 'updatedAt']
 
 route.get('/:id', async (req, res, next) => {
-  const user = await User.findByPk(req.params.id, {
-    attributes: { exclude: HIDE_TIMESTAMP },
-    include: [
-      {
-        model: Blog,
-        as: 'readings',
-        attributes: { exclude: ['id', 'userId', ...HIDE_TIMESTAMP] },
-        through: {
-          attributes: ['isRead', 'id'],
-        },
-      },
-    ],
-  })
+  let where = {}
 
-  res.send(user)
+  if (req.query.isRead) {
+    where['isRead'] = req.query.isRead
+  }
+  try {
+    const user = await User.findByPk(req.params.id, {
+      attributes: { exclude: HIDE_TIMESTAMP },
+      include: [
+        {
+          model: Blog,
+          as: 'readings',
+          attributes: { exclude: ['id', 'userId', ...HIDE_TIMESTAMP] },
+          through: {
+            where,
+            attributes: ['isRead', 'id'],
+          },
+        },
+      ],
+    })
+    res.send(user)
+  } catch (error) {
+    console.log(error.message)
+    next(error)
+  }
 })
 
 route.put('/:username', async (req, res, next) => {

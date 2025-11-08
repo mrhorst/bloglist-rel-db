@@ -4,12 +4,14 @@ const { SECRET } = require('../util/config')
 const { User } = require('../models')
 const Session = require('../models/session')
 const { v4: uuidv4 } = require('uuid')
+const { Op } = require('sequelize')
 
 route.post('/', async (req, res, next) => {
   const { username, password } = req.body
   const user = await User.findOne({
     where: {
       username,
+      active: { [Op.in]: [true, false] },
     },
   })
 
@@ -17,6 +19,10 @@ route.post('/', async (req, res, next) => {
 
   if (!(user && passwordCorrect)) {
     return res.status(401).send({ error: 'invalid username or password' })
+  }
+
+  if (!user.active) {
+    res.status(403).send({ error: 'user is disabled. contact an admin' })
   }
 
   const session = await Session.create({

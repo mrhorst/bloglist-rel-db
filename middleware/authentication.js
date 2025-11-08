@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken')
 const { SECRET } = require('../util/config')
+const Session = require('../models/session')
+const { User } = require('../models')
 
 const tokenExtractor = async (req, res, next) => {
   const authorization = req.get('authorization')
@@ -14,4 +16,26 @@ const tokenExtractor = async (req, res, next) => {
   }
   next()
 }
-module.exports = tokenExtractor
+
+const checkTokenValidity = async (req, res, next) => {
+  const { id, token_id } = req.decodedToken
+
+  const user = await User.findOne({ where: { id } })
+
+  const session = await Session.findOne({
+    where: {
+      userId: id,
+      tokenId: token_id,
+      active: true,
+    },
+  })
+
+  if (!user.active || !session) {
+    return res
+      .status(401)
+      .send({ error: 'user or session is inactive. please log in again' })
+  }
+
+  next()
+}
+module.exports = { tokenExtractor, checkTokenValidity }

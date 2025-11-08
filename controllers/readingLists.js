@@ -1,6 +1,6 @@
 const route = require('express').Router()
 const ReadingList = require('../models/readingList')
-const tokenExtractor = require('../middleware/authentication')
+const { tokenExtractor } = require('../middleware/authentication')
 
 route.post('/', tokenExtractor, async (req, res, next) => {
   if (req.decodedToken.id !== req.body.userId) {
